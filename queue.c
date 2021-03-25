@@ -29,6 +29,17 @@ void q_free(queue_t *q)
 {
     /* TODO: How about freeing the list elements and the strings? */
     /* Free queue structure */
+
+    if (!q)
+        return;
+
+    list_ele_t *e = q->head;
+    while (e) {
+        list_ele_t *next = e->next;
+        free(e->value);
+        free(e);
+        e = next;
+    }
     free(q);
 }
 
@@ -165,6 +176,62 @@ void q_reverse(queue_t *q)
  */
 void q_sort(queue_t *q)
 {
+    if (!q || (q->size) == 0)
+        // printf("the address of q = %p\n",q);
+        return;
+
+    q->head = mergesort(q->head, q->size);
     /* TODO: You need to write the code for this function */
     /* TODO: Remove the above comment when you are about to implement. */
+}
+
+list_ele_t *mergesort(list_ele_t *a, size_t size)
+{
+    if (size > 1) {
+        size_t lsize = size / 2;
+        size_t rsize = size - lsize;
+
+        list_ele_t *rh = Divide(a, lsize);
+        a = mergesort(a, lsize);
+        rh = mergesort(rh, rsize);
+        a = combine(a, rh);
+    }
+    return a;
+}
+
+list_ele_t *Divide(list_ele_t *cut, size_t step)
+{
+    for (int i = 1; i < step; i++) {
+        cut = cut->next;
+    }
+    list_ele_t *rh = cut->next;
+    cut->next = NULL;
+    return rh;
+}
+
+list_ele_t *combine(list_ele_t *lh, list_ele_t *rh)
+{
+    list_ele_t Dummy;
+    list_ele_t *tail = &Dummy;
+    Dummy.next = NULL;
+    while (lh && rh) {
+        if (strcmp((lh->value), (rh->value)) > 0) {
+            // printf("value=%d\n", strcmp(lh->value, rh->value));
+            tail->next = rh;
+            rh = rh->next;
+
+
+        } else {
+            // printf("value=%d\n", strcmp(lh->value, rh->value));
+            tail->next = lh;
+            lh = lh->next;
+        }
+        tail = tail->next;
+    }
+    if (!lh) {
+        tail->next = rh;
+    } else {
+        tail->next = lh;
+    }
+    return (Dummy.next);
 }
