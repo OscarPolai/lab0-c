@@ -153,6 +153,8 @@ int q_size(queue_t *q)
     /* TODO: You need to write the code for this function */
     /* Remember: It should operate in O(1) time */
     /* TODO: Remove the above comment when you are about to implement. */
+    if (!q || q->size == 0)
+        return 0;
     return q->size;
 }
 
@@ -165,8 +167,29 @@ int q_size(queue_t *q)
  */
 void q_reverse(queue_t *q)
 {
-    /* TODO: You need to write the code for this function */
-    /* TODO: Remove the above comment when you are about to implement. */
+    if (!q || q->size <= 1)
+        return;
+
+    list_ele_t *pre, *cur, *nex;
+    pre = NULL;
+    cur = q->head;
+    nex = q->head->next;
+
+    q->tail = q->head;
+
+    while (cur->next) {
+        cur->next = pre;
+
+        pre = cur;
+        cur = nex;
+        nex = nex->next;
+    }
+    cur->next = pre;
+
+    pre = cur;
+    // cur = nex;
+
+    q->head = pre;
 }
 
 /*
