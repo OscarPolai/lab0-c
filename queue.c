@@ -129,11 +129,14 @@ bool q_insert_tail(queue_t *q, char *s)
  */
 bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
 {
-    if (!q || (q->size == 0))
+    if (!q || (q->size == 0) || !sp)
         return false;
     list_ele_t *rmh = q->head;
 
-    memcpy(sp, rmh->value, bufsize);
+
+    memcpy(sp, rmh->value, bufsize - 1);
+    sp[bufsize - 1] = '\0';
+
     if (q->size == 1)
         q->tail = NULL;
     q->head = rmh->next;
@@ -204,6 +207,10 @@ void q_sort(queue_t *q)
         return;
 
     q->head = mergesort(q->head, q->size);
+
+    while (!(q->tail->next == NULL)) {
+        q->tail = q->tail->next;
+    }
     /* TODO: You need to write the code for this function */
     /* TODO: Remove the above comment when you are about to implement. */
 }
